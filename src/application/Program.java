@@ -6,13 +6,15 @@ import java.util.Date;
 import java.util.Scanner;
 
 import entities.Reservation;
+import models.exception.DomainException;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args)  {
 		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			
+		try {
 			System.out.print("Room number ");
 			int room = sc.nextInt();
 			System.out.print("checkIn ");
@@ -20,28 +22,30 @@ public class Program {
 			System.out.print("checkOut");
 			Date checkOut = sdf.parse(sc.next());
 			
-			if(!checkOut.after(checkIn)) {
-				System.out.println("Erro in reservation: Check-out date must be after check-in.");
-			}else {
-				Reservation reservation = new Reservation(room, checkIn, checkOut);
-				System.out.println("Reservation: " + reservation);
-				System.out.println();
-				System.out.println("Enter data to update the reservation.");
-				
-				System.out.print("checkIn ");
-				checkIn = sdf.parse(sc.next());
-				System.out.print("checkOut");
-				checkOut = sdf.parse(sc.next());
-				
-				String error = reservation.updateDates(checkIn, checkOut);
-				if(error != null){
-					System.out.println("Error in reservation: " + error);
-				}
-				else {
-					System.out.println("Reservatoin: " + reservation);
-				}
-					
-			}
+	
+			Reservation reservation = new Reservation(room, checkIn, checkOut);
+			System.out.println("Reservation: " + reservation);
+			System.out.println();
+			System.out.println("Enter data to update the reservation.");
+
+			System.out.print("checkIn ");
+			checkIn = sdf.parse(sc.next());
+			System.out.print("checkOut");
+			checkOut = sdf.parse(sc.next());
+
+			reservation.updateDates(checkIn, checkOut);
+		
+			System.out.println("Reservatoin: " + reservation);
+		}
+		catch(ParseException e){
+			System.out.println("Invalid date format ");
+		}
+		catch(DomainException e) {
+			System.out.println("Error in reservation " + e.getLocalizedMessage());
+		}
+		catch(RuntimeException e) {
+			System.out.println("Unexpeted error");
+		}
 		
 		sc.close();
 		
